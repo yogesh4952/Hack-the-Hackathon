@@ -163,6 +163,24 @@ export const getUserProjects = async (req, res) => {
   }
 };
 
+export const deleteAllProjects = async (req, res) => {
+  try {
+    // Delete all documents from the collection
+    await Project.deleteMany({});
+
+    return res.json({
+      success: true,
+      message: 'All projects have been deleted successfully.',
+    });
+  } catch (error) {
+    console.error('Error deleting all projects:', error);
+    return res.status(500).json({
+      message: 'Server error.',
+      success: false,
+      error: error.message,
+    });
+  }
+};
 export const voteProject = async (req, res) => {
   try {
     const { id } = req.params;
@@ -182,7 +200,7 @@ export const voteProject = async (req, res) => {
         likes: project.likes,
       });
     }
- 
+
     // Increment the vote count
     // project.votes += 1;
     // await project.save();

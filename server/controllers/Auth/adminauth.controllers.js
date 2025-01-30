@@ -35,7 +35,6 @@ export const registerAdmin = async (req, res) => {
     username,
     email,
     password: hashedPw,
-    profilePicture: profilePicturePath,
     phonenumber,
     fullname: fullname.trim(),
     description,
