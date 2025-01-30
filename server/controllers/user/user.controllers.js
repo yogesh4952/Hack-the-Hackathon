@@ -181,6 +181,7 @@ export const deleteAllProjects = async (req, res) => {
     });
   }
 };
+
 export const voteProject = async (req, res) => {
   try {
     const { id } = req.params;

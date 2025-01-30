@@ -15,16 +15,16 @@ import {
 } from '../../controllers/user/user.controllers.js';
 import { registerHackathon } from '../../controllers/user/registrationHackathon.js';
 
-route.post('/projects', authenticateToken, uploadProject); // Specific project route
+route.post('/projects', uploadProject); // Specific project route
 route.get('/projects', getAllProjects); // Specific project route
-route.delete('/projects', authenticateToken, deleteAllProjects); // Specific project route
+route.delete('/projects', deleteAllProjects); // Specific project route
 
-route.get('/projects/:userId', authenticateToken, getUserProjects); // Specific project route
+route.get('/projects/:userId', getUserProjects); // Specific project route
 route.post('/vote/:id', authenticateToken, voteProject); // Voting route
 
 // Hackathon-related routes
-route.get('/', authenticateToken, getHackathons);
-route.get('/:id', authenticateToken, getHackathonsId);
+route.get('/', getHackathons);
+route.get('/:id', getHackathonsId);
 route.post('/register', registerHackathon);
 
 export default route;

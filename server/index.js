@@ -10,14 +10,23 @@ import adminHackathon from './routes/admin/adminHackathon.routes.js';
 import userHackathon from './routes/user/userHackathon.routes.js';
 import cors from 'cors';
 import { handleChatbotRequest } from './controllers/chatbotController.js';
+import { clerkMiddleware } from '@clerk/express';
+import { webhookController } from './controllers/user.webhook.js';
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
 
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  clerkMiddleware({
+    apiKey: process.env.CLERK_API_KEY,
+  })
+);
+
+app.post('/webhook', webhookController);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/user/auth', userAuthRoutes);
 app.use('/api/admin/hackathon', adminHackathon);
