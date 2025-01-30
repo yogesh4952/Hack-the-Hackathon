@@ -20,7 +20,7 @@ route.get('/projects', getAllProjects); // Specific project route
 route.delete('/projects', deleteAllProjects); // Specific project route
 
 route.get('/projects/:userId', getUserProjects); // Specific project route
-route.post('/vote/:id', authenticateToken, voteProject); // Voting route
+route.post('/vote/:id', voteProject); // Voting route
 
 // Hackathon-related routes
 route.get('/', getHackathons);
