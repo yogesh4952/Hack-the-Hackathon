@@ -188,8 +188,7 @@ export const voteProject = async (req, res) => {
     const { like, dislike } = req.body;
 
     const project = await Project.findById(id);
-    console.log(project);
-    console.log(project);
+
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
@@ -202,21 +201,43 @@ export const voteProject = async (req, res) => {
       });
     }
 
-    // Increment the vote count
-    // project.votes += 1;
-    // await project.save();
-    else {
-      project.dislikes += 1;
-      await project.save();
-      return res.status(200).json({
-        message: 'Dislike registered successfully',
-        data: [project.dislikes],
-      });
-    }
-
+    project.dislikes += 1;
+    await project.save();
     return res.status(200).json({
-      message: 'Vote registered successfully',
-      data: [project],
+      message: 'Dislike registered successfully',
+      data: [project.dislikes],
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getLike = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+    return res.status(200).json({
+      message: 'Project likes fetched successfully',
+      likes: project.likes,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getDislike = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+    return res.status(200).json({
+      message: 'Project dislikes fetched successfully',
+      dislikes: project.dislikes,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -9,7 +9,8 @@ export const createHackathon = async (req, res) => {
     if (!name || !description || !startDate || !endDate || !userId) {
       return res.status(400).json({
         success: false,
-        message: 'All fields (name, description, startDate, endDate, userId) are required.',
+        message:
+          'All fields (name, description, startDate, endDate, userId) are required.',
       });
     }
 
@@ -50,7 +51,6 @@ export const createHackathon = async (req, res) => {
       success: true,
       message: 'Hackathon created successfully.',
     });
-
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({
@@ -60,7 +60,6 @@ export const createHackathon = async (req, res) => {
     });
   }
 };
-
 
 export const deleteHackathon = async (req, res) => {
   try {
@@ -111,6 +110,62 @@ export const getAllHackathon = async (req, res) => {
       error: err.message,
       message: 'Internal server error',
       success: false,
+    });
+  }
+};
+
+export const updateHackathon = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, startDate, endDate, prizes } = req.body;
+
+    const parsedStartDate = moment(startDate, 'MM-DD-YY').toDate();
+    const parsedEndDate = moment(endDate, 'MM-DD-YY').toDate();
+
+    // Ensure valid date range
+    if (parsedEndDate <= parsedStartDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'endDate must be after startDate.',
+      });
+    }
+
+    const hackathon = await Hackathon.findById(id);
+
+    if (!hackathon) {
+      return res.status(404).json({
+        success: false,
+        message: 'Hackathon not found.',
+      });
+    }
+
+    hackathon.name = name;
+    hackathon.description = description;
+    hackathon.startDate = parsedStartDate;
+    hackathon.endDate = parsedEndDate;
+    hackathon.prizes = prizes;
+
+    // Set hackathon status
+    const currentTime = Date.now();
+    if (currentTime > parsedEndDate) {
+      hackathon.status = 'closed';
+    } else if (currentTime >= parsedStartDate && currentTime <= parsedEndDate) {
+      hackathon.status = 'open';
+    } else {
+      hackathon.status = 'upcoming';
+    }
+
+    await hackathon.save();
+    return res.json({
+      success: true,
+      message: 'Hackathon updated successfully.',
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({
+      message: 'Server error.',
+      success: false,
+      error: error.message,
     });
   }
 };
