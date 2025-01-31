@@ -3,20 +3,31 @@ import moment from 'moment'; // Install via: npm install moment
 
 export const createHackathon = async (req, res) => {
   try {
-    const { name, description, startDate, endDate, prizes, userId } = req.body;
+    const { name, description, startDate, endDate, prizes } = req.body;
 
     // Validate required fields
-    if (!name || !description || !startDate || !endDate || !userId) {
+    if (!name || !description || !startDate || !endDate) {
       return res.status(400).json({
         success: false,
         message:
-          'All fields (name, description, startDate, endDate, userId) are required.',
+          'All fields (name, description, startDate, endDate ) are required.',
       });
     }
 
     // Parse dates from MM-DD-YY format
-    const parsedStartDate = moment(startDate, 'MM-DD-YY').toDate();
-    const parsedEndDate = moment(endDate, 'MM-DD-YY').toDate();
+    const parsedStartDate = moment(startDate, 'YY-MM-DD').isValid()
+      ? moment(startDate, 'YY-MM-DD').toDate()
+      : null;
+    const parsedEndDate = moment(endDate, 'YY-MM-DD').isValid()
+      ? moment(endDate, 'YY-MM-DD').toDate()
+      : null;
+
+    if (!parsedStartDate || !parsedEndDate) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid date format for startDate or endDate.',
+      });
+    }
 
     // Ensure valid date range
     if (parsedEndDate <= parsedStartDate) {
@@ -33,7 +44,6 @@ export const createHackathon = async (req, res) => {
       endDate: parsedEndDate,
       prizes,
       location: 'Shankhamul',
-      organizer: userId,
     });
 
     // Set hackathon status

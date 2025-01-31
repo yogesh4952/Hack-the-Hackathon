@@ -9,7 +9,7 @@ import {
 } from '../../controllers/admin/admin.hackathon.js';
 import { getHackathons } from '../../controllers/user/user.controllers.js';
 
-route.post('/', authenticateToken, createHackathon);
+route.post('/',  createHackathon);
 route.delete('/:id', authenticateToken, deleteHackathon);
 route.get('/', authenticateToken, getHackathons);
 
