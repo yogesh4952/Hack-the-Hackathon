@@ -16,48 +16,45 @@ export const webhookController = async (req, res) => {
     switch (eventType) {
       case 'user.created': {
         const registeredUser = await User.create({
-          data: {
-            id: data.id,
-            email: data.email_addresses[0].email_address,
-            name: (data.first_name || '') + ' ' + (data.last_name || ''),
-            resume: '',
-            image: data.profile_image_url,
-            createdAt: new Date(data.created_at),
-            updatedAt: new Date(data.updated_at),
-          },
+          id: data.id,
+          email: data.email_addresses[0].email_address,
+          name: (data.first_name || '') + ' ' + (data.last_name || ''),
         });
-        res.status(201).json(new ApiResponse(201, 'User created', ''));
-        break;
+        res.status(201).json({
+          success: true,
+          message: 'User Created succesfully',
+        });
       }
       case 'user.updated': {
-        const updatedUser = await prisma.user.update({
-          where: {
-            id: data.id,
-          },
-          data: {
-            name: (data.first_name || '') + ' ' + (data.last_name || ''),
-            image: data.profile_image_url,
-            email: data.email_addresses[0].email_address,
-            updatedAt: new Date(data.updated_at),
-          },
+        const updatedUser = await User.findByIdAndUpdate(data.id, {
+          name: (data.first_name || '') + ' ' + (data.last_name || ''),
+          email: data.email_addresses[0].email_address,
+          updatedAt: new Date(data.updated_at),
         });
 
-        res.status(200).json(new ApiResponse(200, 'User updated', ''));
+        res.status(200).json({
+          success: true,
+          message: 'User Updated succesfully',
+        });
         break;
       }
       case 'user.deleted': {
-        const deletedUser = await prisma.user.delete({
-          where: {
-            id: data.id,
-          },
+        const deletedUser = await User.findByIdAndDelete(data.id);
+        res.status(200).json({
+          success: true,
+          message: 'User deleted succesfully',
         });
-
-        res.status(200).json(new ApiResponse(200, 'User deleted', ''));
         break;
       }
 
       case 'default':
         break;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
+  }
 };
