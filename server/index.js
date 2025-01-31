@@ -22,6 +22,7 @@ const allowedOrigins = [
   'https://org-hack-the-hackathon.onrender.com',
   'https://hack-the-hackathon-joa4.onrender.com',
 ];
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -34,6 +35,8 @@ app.use(
     credentials: true,
   })
 );
+
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
